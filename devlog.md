@@ -16,7 +16,7 @@ Figured out alias was working the entire time was just opening and commiting in 
  Created my basic file structure for the project. Will be adding more in the future just wanted to lay the building blocks for the future.
 
 
-
+ ### Fri Oct 24 21:28:45 CDT 2025 - Update devlog and Main.hs
  Goal for this session: Implement startup logic for detecting interactive vs batch mode.
 
  Used getArgs to capture command line flags 
@@ -24,5 +24,8 @@ Figured out alias was working the entire time was just opening and commiting in 
  Implemented evalLoop that currently just echoes input
  Added quit condition and prompt handling for interactive mode
 
- Created the foundation for the calcs REPL behavior. The evalLoop recursion feels simple and right in Haskell. Next step will be to integrate a history list for the calc that records results and dislays them with increment
+ Created the foundation for the calcs REPL behavior. Tested via terminal for these basic features. The evalLoop recursion feels simple and right in Haskell. Next step will be to integrate a history list for the calc that records results and dislays them with increment
 
+
+
+ ### Fri Oct 24 21:37:45 CDT 2025 - Implemented History Tracking and Result Output
