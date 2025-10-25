@@ -48,4 +48,12 @@ I know the project will use prefix notation as its main form of expression and u
 
  Ran into some infinite looping in my evalLoop but tracked it to a simple indentation error. How does TI program calcs and embedded systems??? This is very tedious. Anyway, using pattern matching the Either type made error handling straightforward. Prefix recursion is smooth here as each call consumes part of the token list and returns both the value and remaining tokens. Next step is to add support for history references and ensure invalid references or syntax trigger appropriate error msgs.
 
- 
+ ### Fri Oct 24 22:54:36 CDT 2025 - Added History References
+ Goal of this session: Allow using previous results in new expressions
+
+ Implemented lookupHistory to handle $n parsing and retreival
+ Ensured history is accessed in chronological order via reverse
+ Integrated history references into recursive evaluator
+ Added error message for invalid or missing references
+
+ Ran into some more looping issues but was not just a simple indentation issue, ending up being a line that was made redudant at the addition of the new features and functions. The $n feature finally connected everything - the REPL, parser, and history. Next step add final error handling polish, verify batch mode consistency, and perform integration testing.

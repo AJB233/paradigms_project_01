@@ -7,6 +7,19 @@ module Main where
 import System.Environment (getArgs)
 import System.IO (hFlush, stdout, isEOF)
 import Text.Read (readMaybe)
+import Data.Char (isDigit)
+
+-- history is [Double], index 1-based
+getHistoryValue :: String -> [Double] -> Either String Double
+getHistoryValue ('$':rest) history
+  | all isDigit rest =
+      let idx = read rest :: Int
+      in if idx > 0 && idx <= length history
+           then Right (history !! (idx - 1))
+           else Left ("Error: Invalid history reference " ++ '$':rest)
+  | otherwise = Left "Error: Invalid history reference format"
+getHistoryValue _ _ = Left "Error: Invalid Expression"
+
 
 -- Detect interactive or batch mode
 isInteractive :: [String] -> Bool
@@ -26,7 +39,7 @@ evalExpr (tok:rest) history =
     "*" -> do
       (v1, rest1) <- evalExpr rest history
       (v2, rest2) <- evalExpr rest1 history
-      return (v1 + v2, rest2)
+      return (v1 * v2, rest2)
 
     "/" -> do
       (v1, rest1) <- evalExpr rest history
@@ -38,10 +51,16 @@ evalExpr (tok:rest) history =
     "-" -> do 
       (v, rest1) <- evalExpr rest history
       return (-v, rest1)
-    
-    _ -> case readMaybe tok :: Maybe Double of
+
+    ('$':_) ->
+        case getHistoryValue tok history of
+          Right val -> Right (val, rest)
+          Left err  -> Left err
+
+    _ ->
+      case readMaybe tok :: Maybe Double of
         Just num -> Right (num, rest)
-        Nothing -> Left "Invalid Expression"
+        Nothing  -> Left "Invalid Expression"
 
 -- Helper to tokenize input
 tokenize :: String -> [String]
@@ -79,9 +98,8 @@ evalLoop interactive history = do
               Left err -> putStrLn ("Error: " ++ err)
               Right result -> do
                   printResult interactive history result
-                  let newHistory = result : history
+                  let newHistory = history ++ [result]
                   evalLoop interactive newHistory
-            evalLoop interactive history  -- keeps looping on error too
 
 -- Main entry
 main :: IO ()
