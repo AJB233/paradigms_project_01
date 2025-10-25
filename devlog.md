@@ -57,3 +57,12 @@ I know the project will use prefix notation as its main form of expression and u
  Added error message for invalid or missing references
 
  Ran into some more looping issues but was not just a simple indentation issue, ending up being a line that was made redudant at the addition of the new features and functions. The $n feature finally connected everything - the REPL, parser, and history. Next step add final error handling polish, verify batch mode consistency, and perform integration testing.
+
+ ### Fri Oct 24 23:09:47 CDT 2025 - Project Wrapup and README
+ Goal of this session: Finalize project and create README for submission
+
+ Wrote README detailing running instructions and examples
+ Created exmaple inputs for testing
+ Gave details on project
+
+ The README effectively communicates functionality and setup. Pretty happy with the end result ready to submit.
