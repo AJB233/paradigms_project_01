@@ -6,16 +6,61 @@ module Main where
 
 import System.Environment (getArgs)
 import System.IO (hFlush, stdout, isEOF)
+import Text.Read (readMaybe)
 
 -- Detect interactive or batch mode
 isInteractive :: [String] -> Bool
 isInteractive args = not ("-b" `elem` args || "--batch" `elem` args)
 
+-- Expression evaluation
+--Parse and eval a prefix expression recursively
+evalExpr :: [String] -> [Double] -> Either String (Double, [String])
+evalExpr [] _ = Left "Invalid Expression"
+evalExpr (tok:rest) history =
+  case tok of
+    "+" -> do
+      (v1, rest1) <- evalExpr rest history
+      (v2, rest2) <- evalExpr rest1 history
+      return (v1 + v2, rest2)
+
+    "*" -> do
+      (v1, rest1) <- evalExpr rest history
+      (v2, rest2) <- evalExpr rest1 history
+      return (v1 + v2, rest2)
+
+    "/" -> do
+      (v1, rest1) <- evalExpr rest history
+      (v2, rest2) <- evalExpr rest1 history
+      if v2 == 0
+        then Left "Division by zero"
+        else return (v1 / v2, rest2)
+
+    "-" -> do 
+      (v, rest1) <- evalExpr rest history
+      return (-v, rest1)
+    
+    _ -> case readMaybe tok :: Maybe Double of
+        Just num -> Right (num, rest)
+        Nothing -> Left "Invalid Expression"
+
+-- Helper to tokenize input
+tokenize :: String -> [String]
+tokenize = words
+
+-- Wrapper to evaluate a full line
+evaluateLine :: String -> [Double] -> Either String Double
+evaluateLine input history = do
+  let tokens = tokenize input
+  (value, remaining) <- evalExpr tokens history
+  if null remaining
+    then Right value
+    else Left "Invalid Expression"
+
 printResult :: Bool -> [Double] -> Double -> IO ()
 printResult interactive history result = do
         let newId = length history + 1
         let output = show newId ++ ": " ++ show (realToFrac result :: Double)
-        if interactive then putStrLn output else putStrLn output
+        putStrLn output
 
 -- Eval loop (REPL)
 evalLoop :: Bool -> [Double] -> IO ()
@@ -24,19 +69,19 @@ evalLoop interactive history = do
     hFlush stdout
     eof <- isEOF
     if eof
-      then putStrLn "BYE!"
+      then putStrLn "Goodbye!"
       else do
         input <- getLine
-        if input == "QUIT"
-          then putStrLn "BYE!"
+        if input == "quit"
+          then putStrLn "Goodbye!"
           else do
-            -- Placeholder for now
-            let result = fromIntegral (length history + 1) * 1.5
-            printResult interactive history result
-
-            -- Add result to history
-            let newHistory = result : history
-            evalLoop interactive newHistory
+            case evaluateLine input history of
+              Left err -> putStrLn ("Error: " ++ err)
+              Right result -> do
+                  printResult interactive history result
+                  let newHistory = result : history
+                  evalLoop interactive newHistory
+            evalLoop interactive history  -- keeps looping on error too
 
 -- Main entry
 main :: IO ()
