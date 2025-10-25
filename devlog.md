@@ -26,6 +26,16 @@ Figured out alias was working the entire time was just opening and commiting in 
 
  Created the foundation for the calcs REPL behavior. Tested via terminal for these basic features. The evalLoop recursion feels simple and right in Haskell. Next step will be to integrate a history list for the calc that records results and dislays them with increment
 
+ ### Fri Oct 24 21:41:45 CDT 2025 - Implemented History Tracking + Result Output
 
+ Goal for this session: Integrate immutable history storage and format results with IDs
 
- ### Fri Oct 24 21:37:45 CDT 2025 - Implemented History Tracking and Result Output
+ Introduced printResult helper for consistent output
+ Each evaluation now calculates its ID based on history length
+ Added a test placeholder result to stimulate successful evals
+ Confirmed recursive history accumulation works in both modes
+ Maintained pure recursion instead of mutable state
+
+ The recursive REPL pattern feels very intuitive in Haskell. By consing results onto the history and repassing it the calc retains past calculations. Next step will be to implement real expression evaluation in prefix notation
+
+ 

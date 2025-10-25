@@ -11,7 +11,13 @@ import System.IO (hFlush, stdout, isEOF)
 isInteractive :: [String] -> Bool
 isInteractive args = not ("-b" `elem` args || "--batch" `elem` args)
 
--- Placeholder for the main loop
+printResult :: Bool -> [Double] -> Double -> IO ()
+printResult interactive history result = do
+        let newId = length history + 1
+        let output = show newId ++ ": " ++ show (realToFrac result :: Double)
+        if interactive then putStrLn output else putStrLn output
+
+-- Eval loop (REPL)
 evalLoop :: Bool -> [Double] -> IO ()
 evalLoop interactive history = do
     if interactive then putStr "> " else return ()
@@ -24,8 +30,13 @@ evalLoop interactive history = do
         if input == "QUIT"
           then putStrLn "BYE!"
           else do
-            putStrLn ("You entered: " ++ input)
-            evalLoop interactive history
+            -- Placeholder for now
+            let result = fromIntegral (length history + 1) * 1.5
+            printResult interactive history result
+
+            -- Add result to history
+            let newHistory = result : history
+            evalLoop interactive newHistory
 
 -- Main entry
 main :: IO ()
